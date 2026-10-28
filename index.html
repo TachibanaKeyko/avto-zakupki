@@ -22,6 +22,11 @@
 <body>
 <div class="bar">
   <b>Закупки</b>
+  <div class="tabs hvs">
+    <button data-h="1">Плашка 1</button>
+    <button data-h="2">Плашка 2</button>
+    <button data-h="3">Плашка 3</button>
+  </div>
   <div class="tabs sizes">
     <button data-w="100%">Десктоп</button>
     <button data-w="820px">Планшет</button>
@@ -41,22 +46,25 @@
 <script>
   const f=document.getElementById('f'),solo=document.getElementById('solo');
   const sizes={'100%':'desktop','820px':'tablet','390px':'phone'};
-  const st={w:'100%',t:'light',g:'a'};
-  const [w,t,g]=location.hash.slice(1).split('/');
+  const st={w:'100%',t:'light',g:'a',h:'1'};
+  const [w,t,g,h]=location.hash.slice(1).split('/');
+  if(['1','2','3'].includes(h))st.h=h;
   for(const k in sizes)if(sizes[k]===w)st.w=k;
   if(t==='dark')st.t='dark';
   if(g==='b')st.g='b';
-  const src=()=>'zakupki.html?theme='+st.t+'&tg='+st.g;
+  const src=()=>'zakupki.html?theme='+st.t+'&tg='+st.g+'&hv='+st.h;
   const apply=reload=>{
     if(reload)f.src=src();
     f.style.width=st.w;solo.href=src();
     document.querySelectorAll('.sizes button').forEach(b=>b.classList.toggle('on',b.dataset.w===st.w));
     document.querySelectorAll('.themes button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.t));
+    document.querySelectorAll('.hvs button').forEach(b=>b.classList.toggle('on',b.dataset.h===st.h));
     document.querySelectorAll('.tgs button').forEach(b=>b.classList.toggle('on',b.dataset.g===st.g));
-    history.replaceState(null,'','#'+sizes[st.w]+'/'+st.t+'/'+st.g);
+    history.replaceState(null,'','#'+sizes[st.w]+'/'+st.t+'/'+st.g+'/'+st.h);
   };
   document.querySelectorAll('.sizes button').forEach(b=>b.onclick=()=>{st.w=b.dataset.w;apply()});
   document.querySelectorAll('.themes button').forEach(b=>b.onclick=()=>{st.t=b.dataset.t;f.contentWindow.postMessage({setTheme:st.t},'*');apply()});
+  document.querySelectorAll('.hvs button').forEach(b=>b.onclick=()=>{st.h=b.dataset.h;f.contentWindow.postMessage({setHv:st.h},'*');apply()});
   document.querySelectorAll('.tgs button').forEach(b=>b.onclick=()=>{st.g=b.dataset.g;apply(true)});
   // кнопка внутри страницы тоже двигает переключатель на витрине
   addEventListener('message',e=>{if(e.data&&e.data.avTheme){st.t=e.data.avTheme;apply()}});
