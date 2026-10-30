@@ -12,6 +12,9 @@
   (function(){
     var q=new URLSearchParams(location.search);
     document.documentElement.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
+    // оттенок жёлтого на выбор: ?y=1..5, 0 — прежний фирменный
+    var Y=['#fff200','#ffe94a','#f7d83b','#f2cf3a','#e9c63f','#e0bd45'],y=Y[+q.get('y')];
+    if(y)document.documentElement.style.setProperty('--yellow',y);
   })();
 </script>
 <style>
@@ -67,7 +70,7 @@ nav a.cur{box-shadow:inset 0 -2px 0 var(--yellow);color:var(--ink)}
 .btn svg{width:18px;height:18px;transition:transform .25s ease}
 .btn:hover svg{transform:translateX(4px)}
 .btn-main{background:var(--yellow);color:var(--on-yellow)}
-.btn-main:hover{background:#ffe800;border-color:#ffe800}
+.btn-main:hover{filter:brightness(.95)}
 .btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--bg)}
 html{overflow-x:clip}
@@ -138,7 +141,7 @@ section{padding:72px 0 0}
 /* кнопка «Смотреть»: плоская жёлтая со стрелкой, как кнопки на странице заявки */
 .go{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;justify-self:end;width:150px;background:var(--yellow);color:#141414;font:600 14px Inter;text-decoration:none;border-radius:3px;transition:background .2s}
 .go svg{width:16px;height:16px;transition:transform .25s ease}
-.go:hover{background:#ffe800}
+.go:hover{filter:brightness(.95)}
 .go:hover svg{transform:translateX(4px)}
 .empty{display:none;padding:48px 0;text-align:center;color:var(--muted);border-bottom:1px solid var(--line)}
 .all{display:flex;justify-content:center;padding:32px 0 0}
