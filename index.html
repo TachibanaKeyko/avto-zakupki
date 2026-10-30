@@ -4,87 +4,321 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>avtomatika.ru — Закупки</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tektur:wght@900&display=swap" rel="stylesheet">
+<title>Закупки — avtomatika.ru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tektur:wght@500;700;900&display=swap" rel="stylesheet">
+<script>
+  // тема до отрисовки, чтобы не мигало
+  (function(){
+    var q=new URLSearchParams(location.search);
+    document.documentElement.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
+  })();
+</script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font:400 15px/1.5 Inter,sans-serif;background:#2f2f2f;color:#ddd;min-height:100vh;display:flex;flex-direction:column}
-  .bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 20px;background:#262626;border-bottom:4px solid #fff200}
-  .bar b{font:900 18px Tektur;color:#fff;margin-right:auto}
-  .tabs{display:flex;gap:6px}
-  .tabs button{font:600 14px Inter;background:transparent;color:#ccc;border:1px solid #555;border-radius:3px;padding:8px 14px;cursor:pointer}
-  .tabs button.on{background:#fff200;color:#141414;border-color:#fff200}
-  .bar a{color:#fff200;font-size:14px}
-  .stage{flex:1;display:flex;justify-content:center;padding:24px 12px;overflow:auto}
-  iframe{background:#fff;border:0;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.4);height:calc(100vh - 120px);transition:width .25s}
+:root{
+  --ink:#141414; --text:#2b2b2b; --muted:#6b6b6b; --line:#e3e3e3; --line2:#cfcfcf;
+  --bg:#ffffff; --soft:#f5f5f3; --card:#ffffff; --graphite:#2f2f2f;
+  --yellow:#fff200; --on-yellow:#141414; --logo:none;
+  --wrap:1200px; --r:4px;
+}
+[data-theme=dark]{
+  --ink:#f2f2f2; --text:#d4d4d4; --muted:#9a9a9a; --line:#353535; --line2:#474747;
+  --bg:#1b1b1b; --soft:#232323; --card:#262626; --graphite:#262626;
+  --logo:invert(1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font:400 16px/1.6 Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .3s,color .3s}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+.h1,.h2,.h3{font-family:Tektur,Inter,sans-serif;color:var(--ink);letter-spacing:-.01em;overflow-wrap:break-word}
+.h1{font-weight:900;font-size:clamp(30px,4.4vw,54px);line-height:1.06}
+.h2{font-weight:900;font-size:clamp(24px,3vw,34px);line-height:1.15;text-transform:uppercase}
+.h3{font-weight:700;font-size:22px;line-height:1.25}
+
+/* шапка как на сайте */
+header{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:10;transition:background .3s}
+header .wrap{display:flex;align-items:center;gap:28px;height:68px}
+.logo img{height:34px;width:auto;display:block;filter:var(--logo)}
+nav{display:flex;gap:28px;font-size:16px;margin-left:auto;align-items:center}
+nav a{text-decoration:none;color:var(--text)}
+nav a.order{background:var(--yellow);color:var(--on-yellow);padding:4px 10px}
+nav a.cur{box-shadow:inset 0 -2px 0 var(--yellow);color:var(--ink)}
+.login{background:#1f2a3a;color:#fff;font:600 15px Inter;padding:8px 14px;border-radius:3px;text-decoration:none}
+[data-theme=dark] .login{background:#3a3a3a}
+.burger{display:none;width:26px;height:18px;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);position:relative;flex:none}
+.burger:after{content:"";position:absolute;left:0;right:0;top:4.5px;border-top:3px solid var(--ink)}
+
+/* переключатель день/ночь */
+.tg-a{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;transition:border-color .2s}
+.tg-a:hover{border-color:var(--ink)}
+.tg-a svg{width:18px;height:18px}
+.tg-a .moon,[data-theme=dark] .tg-a .sun{display:none}
+[data-theme=dark] .tg-a .moon{display:block}
+
+.stripe{height:6px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 14px,#141414 14px 28px)}
+.crumbs{font-size:14px;color:var(--muted);padding-top:20px}
+.crumbs a{text-decoration:none}
+
+/* общие детали плашки */
+.who{font:700 12px/1 Inter;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);display:flex;align-items:center;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;height:56px;padding:0 26px 0 30px;font:700 15px Inter;text-decoration:none;border-radius:var(--r);border:2px solid var(--yellow);cursor:pointer;width:fit-content;transition:background .2s,color .2s,border-color .2s}
+.btn svg{width:18px;height:18px;transition:transform .25s ease}
+.btn:hover svg{transform:translateX(4px)}
+.btn-main{background:var(--yellow);color:var(--on-yellow)}
+.btn-main:hover{background:#ffe800;border-color:#ffe800}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+html{overflow-x:clip}
+
+/* плашка как на главной avtomatika.ru */
+@font-face{font-family:zenKurenaido;src:url(fonts/zen-kurenaido.woff2) format("woff2");font-display:swap}
+.hv8{margin-top:12px;background:var(--graphite);border-radius:var(--r);padding:22px 56px 56px;color:#cfcfcf}
+[data-theme=dark] .hv8{border:1px solid var(--line)}
+.hv8 .crumbs{padding:0;color:#9a9a9a}
+.hv8 .crumbs a:hover{color:#fff}
+.hv8 .top{text-align:center;margin:30px 0 48px}
+.hv8 .h1{font-weight:900;font-size:clamp(30px,4.4vw,54px);line-height:1.1;color:#fff}
+.hv8 .slogan{display:block;font:400 clamp(26px,3.4vw,44px)/1.2 zenKurenaido,Inter,sans-serif;color:var(--yellow);margin-top:14px}
+.hv8 .sides{display:grid;grid-template-columns:1fr 1fr}
+.hv8 .side{padding:8px 48px 8px 0;display:flex;flex-direction:column}
+.hv8 .side+.side{padding:8px 0 8px 48px;border-left:1px solid #4a4a4a}
+.hv8 .side .who{font:700 13px/1 Inter;text-transform:uppercase;letter-spacing:.1em;color:var(--yellow);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.hv8 .side .who:before{content:"";width:10px;height:10px;flex:none;background:var(--yellow)}
+.hv8 .side .h3{color:#fff;margin-bottom:12px}
+.hv8 .side p{flex:1;margin-bottom:28px;max-width:440px}
+.hv8 .btn{height:52px;padding:0 30px}
+.hv8 .btn-ghost{color:var(--yellow);border-color:var(--yellow)}
+.hv8 .btn-ghost:hover{background:var(--yellow);color:#141414}
+
+
+/* как это работает: ниже и плотнее, строка цифр */
+section{padding:72px 0 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.step{padding:22px 28px 22px 0;display:grid;grid-template-columns:52px 1fr;gap:0 14px;align-items:start}
+.step+.step{padding-left:28px;border-left:1px solid var(--line)}
+.step b{font:900 30px/1 Tektur;color:var(--ink);grid-row:span 2;padding-top:2px}
+.step b:after{content:"";display:block;width:24px;height:3px;background:var(--yellow);margin-top:10px}
+.step h4{font:600 16px/1.35 Inter;color:var(--ink);margin-bottom:4px}
+.step p{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* лента заявок: поиск, фильтры, сортировка */
+.tabs{display:flex;gap:28px;font-size:15px}
+.tabs button{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 0 6px}
+.tabs button.on{color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--yellow)}
+.tabs i{font-style:normal;color:var(--muted);font-weight:400;margin-left:6px}
+.tools{display:grid;grid-template-columns:1fr 200px 200px 220px;gap:10px;margin-bottom:8px}
+.search{position:relative}
+.search svg{position:absolute;left:16px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search input{width:100%;height:48px;border:1px solid var(--line2);background:var(--bg);border-radius:var(--r);padding:0 16px 0 46px;font-size:15px;transition:border-color .15s}
+.search input:focus{outline:none;border-color:var(--ink)}
+.search input::placeholder{color:var(--muted)}
+.sel{position:relative}
+.sel select{appearance:none;-webkit-appearance:none;width:100%;height:48px;border:1px solid var(--line2);background:var(--bg);border-radius:var(--r);padding:0 40px 0 16px;font-size:15px;cursor:pointer;transition:border-color .15s}
+.sel select:focus{outline:none;border-color:var(--ink)}
+.sel:after{content:"";position:absolute;right:18px;top:50%;width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.sel.sort select{font-weight:600}
+.found{font-size:13px;color:var(--muted);padding:14px 0}
+.list{border-top:1px solid var(--line)}
+.req{display:grid;grid-template-columns:150px 1fr 190px 150px;gap:28px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line);transition:background .2s}
+.req .no{font:700 15px/1.3 Tektur;color:var(--ink);align-self:start}
+.req .date{display:block;font:400 13px Inter;color:var(--muted);margin-top:6px}
+.req .body{align-self:start}
+.req .txt{font-size:15px;line-height:1.55;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.req .meta{font-size:13px;color:var(--muted);margin-top:8px}
+.req .meta span+span:before{content:"·";margin:0 8px}
+.req .cat{color:var(--ink)}
+.req .until{font-size:14px;color:var(--text);line-height:1.5;align-self:start}
+.req .until b{display:block;font-weight:600;color:var(--ink)}
+.req .until.soon i{font-style:normal;color:var(--ink);background:var(--yellow);color:#141414;padding:0 5px;border-radius:2px}
+.req .until i{font-style:normal}
+.req.closed .until b{color:var(--muted)}
+/* кнопка «Смотреть»: плоская жёлтая со стрелкой, как кнопки на странице заявки */
+.go{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;justify-self:end;width:150px;background:var(--yellow);color:#141414;font:600 14px Inter;text-decoration:none;border-radius:3px;transition:background .2s}
+.go svg{width:16px;height:16px;transition:transform .25s ease}
+.go:hover{background:#ffe800}
+.go:hover svg{transform:translateX(4px)}
+.empty{display:none;padding:48px 0;text-align:center;color:var(--muted);border-bottom:1px solid var(--line)}
+.all{display:flex;justify-content:center;padding:32px 0 0}
+.btn-line{border-color:var(--ink);color:var(--ink);background:transparent;padding:0 30px}
+.btn-line:hover{background:var(--ink);color:var(--bg)}
+
+footer{margin-top:88px;background:#262626;color:#a0a0a0;padding:40px 0;font-size:14px}
+[data-theme=dark] footer{background:#141414}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer nav{margin:0;gap:24px;font-size:14px}
+footer nav a{color:#d0d0d0}
+
+@media (max-width:1024px){
+  nav{display:none}
+  .burger{display:block}
+  header .wrap{gap:16px}
+  .logo{margin-right:auto}
+  .hv8{padding:20px 32px 40px}
+  .hv8 .side{padding-right:28px}.hv8 .side+.side{padding-left:28px}
+  .steps{grid-template-columns:1fr;border-bottom:0}
+  .step,.step+.step{padding:18px 0;border-left:0;border-bottom:1px solid var(--line)}
+  .tools{grid-template-columns:1fr 1fr 1fr}
+  .search{grid-column:1/-1}
+  .req{grid-template-columns:120px 1fr 150px;gap:20px}
+  .req .until{grid-column:2;grid-row:2;margin-top:-12px}
+  .req .go{grid-column:3;grid-row:1}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  header .wrap{height:58px}
+  .logo img{height:26px}
+  .login{display:none}
+  .hv8{margin:0 -16px;border-radius:0;padding:16px 20px 32px}
+  .hv8 .top{text-align:left;margin:24px 0 32px}
+  .hv8 .sides{grid-template-columns:1fr}
+  .hv8 .side,.hv8 .side+.side{padding:0;border:0}
+  .hv8 .side+.side{margin-top:32px;padding-top:32px;border-top:1px solid #4a4a4a}
+  .btn{width:100%}
+  section{padding-top:52px}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .tools{grid-template-columns:1fr 1fr}
+  .sel.sort{grid-column:1/-1}
+  .req{grid-template-columns:1fr;gap:10px;padding:22px 0}
+  .req .no{display:flex;justify-content:space-between;align-items:baseline}
+  .req .date{margin:0}
+  .req .until,.req .go{grid-column:auto;grid-row:auto;margin:0}
+  .req .until b{display:inline;margin-right:6px}
+  .go{width:100%;margin-top:6px}
+  footer{margin-top:56px}
+}
 </style>
 </head>
 <body>
-<div class="bar">
-  <b>Закупки</b>
-  <div class="tabs hvs">
-    <button data-h="8">Новая</button>
-    <button data-h="1">Плашка 1</button>
-    <button data-h="2">2</button>
-    <button data-h="3">3</button>
-    <button data-h="4">4</button>
-    <button data-h="5">5</button>
-    <button data-h="6">6</button>
-    <button data-h="7">7</button>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="arr" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></symbol></svg>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#"><img src="https://avtomatika.ru/avtomatikaru2-2.svg" alt="avtomatika.ru"></a>
+    <nav><a class="order" href="#">Заказать АСУ ТП</a><a href="#">Услуги</a><a href="#">Оборудование</a><a class="cur" href="#">Закупки</a><a href="#">Блог</a><a href="#">О нас</a></nav>
+    <button class="tg-a" type="button" aria-label="День или ночь" onclick="flip()">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="login" href="#">Вход</a>
+    <span class="burger" aria-label="Меню"></span>
   </div>
-  <div class="tabs sizes">
-    <button data-w="100%">Десктоп</button>
-    <button data-w="820px">Планшет</button>
-    <button data-w="390px">Телефон</button>
+</header>
+<div class="stripe"></div>
+
+<main class="wrap">
+
+  <!-- плашка -->
+  <div class="hv8">
+    <div class="crumbs"><a href="#">Главная</a> / Закупки</div>
+    <div class="top">
+      <h1 class="h1">Закупка оборудования для промышленной автоматики</h1>
+      <span class="slogan">Бесплатный сервис</span>
+    </div>
+    <div class="sides">
+      <div class="side">
+        <span class="who">Покупателям</span>
+        <h2 class="h3">Собрать предложения от поставщиков</h2>
+        <p>Поставщики из каталога и подписавшиеся, направят вам предложения по интересующему вас оборудованию</p>
+        <a class="btn btn-main" href="#">Заполнить заявку</a>
+      </div>
+      <div class="side">
+        <span class="who">Поставщикам</span>
+        <h2 class="h3">Новые заявки от покупателей</h2>
+        <p>Подпишитесь на поступление новых заявок</p>
+        <a class="btn btn-ghost" href="#">Подписаться</a>
+      </div>
+    </div>
   </div>
-  <div class="tabs themes">
-    <button data-t="light">День</button>
-    <button data-t="dark">Ночь</button>
+  <section>
+    <div class="sec-head"><h2 class="h2">Как это работает</h2></div>
+    <div class="steps">
+      <div class="step"><b>01</b><h4>Заполните заявку</h4><p>Укажите оборудование, количество, регион поставки и срок приёма предложений</p></div>
+      <div class="step"><b>02</b><h4>Заявку получат поставщики</h4><p>Её увидят производители и поставщики из каталога avtomatika.ru</p></div>
+      <div class="step"><b>03</b><h4>Сравните предложения</h4><p>Ответы приходят вам напрямую, выбираете лучшие условия</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2 class="h2">Заявки</h2>
+      <div class="tabs"><button class="on" data-s="open">Открытые<i></i></button><button data-s="closed">Завершённые<i></i></button></div>
+    </div>
+    <div class="tools">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Поиск по заявкам: модель, бренд, артикул"></label>
+      <div class="sel"><select id="cat"><option value="">Все категории</option></select></div>
+      <div class="sel"><select id="reg"><option value="">Все регионы</option></select></div>
+      <div class="sel sort"><select id="sort">
+        <option value="new">Сначала новые</option>
+        <option value="soon">Скоро закрываются</option>
+        <option value="big">Больше позиций</option>
+      </select></div>
+    </div>
+    <div class="found" id="found"></div>
+    <div class="list" id="list"></div>
+    <div class="empty" id="empty">Ничего не нашлось, попробуйте изменить запрос или фильтры</div>
+    <div class="all"><a class="btn btn-line" href="#">Показать ещё</a></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav><a href="#">Заказать АСУ ТП</a><a href="#">Оборудование</a><a href="#">Блог</a><a href="#">Контакты</a></nav>
+    <span>© 2025, ООО «АВТОМАТИКА.РУ»</span>
   </div>
-  <div class="tabs tgs">
-    <button data-g="a">Кнопка А</button>
-    <button data-g="b">Кнопка Б</button>
-  </div>
-  <div class="tabs bcs">
-    <span style="color:#888;font-size:14px;align-self:center">Цвет:</span>
-    <button data-c="1">1</button>
-    <button data-c="2">2</button>
-    <button data-c="3">3</button>
-    <button data-c="4">4</button>
-    <button data-c="5">5</button>
-  </div>
-  <a id="solo" href="zakupki.html" target="_blank">Открыть отдельно</a>
-</div>
-<div class="stage"><iframe id="f"></iframe></div>
+</footer>
+
 <script>
-  const f=document.getElementById('f'),solo=document.getElementById('solo');
-  const sizes={'100%':'desktop','820px':'tablet','390px':'phone'};
-  const st={w:'100%',t:'light',g:'a',h:'8',c:'5'};
-  const [w,t,g,h,c]=location.hash.slice(1).split('/');
-  if(['1','2','3','4','5'].includes(c))st.c=c;
-  if(['1','2','3','4','5','6','7','8'].includes(h))st.h=h;
-  for(const k in sizes)if(sizes[k]===w)st.w=k;
-  if(t==='dark')st.t='dark';
-  if(g==='b')st.g='b';
-  const src=()=>'zakupki.html?theme='+st.t+'&tg='+st.g+'&hv='+st.h+'&bc='+st.c;
-  const apply=reload=>{
-    if(reload)f.src=src();
-    f.style.width=st.w;solo.href=src();
-    document.querySelectorAll('.sizes button').forEach(b=>b.classList.toggle('on',b.dataset.w===st.w));
-    document.querySelectorAll('.themes button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.t));
-    document.querySelectorAll('.hvs button').forEach(b=>b.classList.toggle('on',b.dataset.h===st.h));
-    document.querySelectorAll('.tgs button').forEach(b=>b.classList.toggle('on',b.dataset.g===st.g));
-    document.querySelectorAll('.bcs button').forEach(b=>b.classList.toggle('on',b.dataset.c===st.c));
-    history.replaceState(null,'','#'+sizes[st.w]+'/'+st.t+'/'+st.g+'/'+st.h+'/'+st.c);
-  };
-  document.querySelectorAll('.sizes button').forEach(b=>b.onclick=()=>{st.w=b.dataset.w;apply()});
-  document.querySelectorAll('.themes button').forEach(b=>b.onclick=()=>{st.t=b.dataset.t;f.contentWindow.postMessage({setTheme:st.t},'*');apply()});
-  document.querySelectorAll('.hvs button').forEach(b=>b.onclick=()=>{st.h=b.dataset.h;f.contentWindow.postMessage({setHv:st.h},'*');apply()});
-  document.querySelectorAll('.tgs button').forEach(b=>b.onclick=()=>{st.g=b.dataset.g;apply(true)});
-  document.querySelectorAll('.bcs button').forEach(b=>b.onclick=()=>{st.c=b.dataset.c;f.contentWindow.postMessage({setBc:st.c},'*');apply()});
-  // кнопка внутри страницы тоже двигает переключатель на витрине
-  addEventListener('message',e=>{if(e.data&&e.data.avTheme){st.t=e.data.avTheme;apply()}});
-  apply(true);
+  function flip(){
+    var r=document.documentElement,t=r.dataset.theme==='dark'?'light':'dark';
+    r.dataset.theme=t;localStorage.setItem('av-theme',t);
+  }
+
+  // примерные заявки, только для наброска
+  var R=[
+    {n:'00412',d:'Сегодня',o:0,t:'Прошу выставить счёт или КП: контроллер Wiren Board 8, 2 шт., модуль реле WB-MR6C v.2, 6 шт. Интересуют сроки поставки и доставка',p:2,r:'Иркутская область',c:'Контроллеры',u:'6 ноября',l:9},
+    {n:'00411',d:'Вчера',o:1,t:'Шлюз Intesis Modbus — BACnet, 1 шт. Аналоги рассмотрим',p:1,r:'Москва',c:'Шлюзы и связь',u:'4 ноября',l:7},
+    {n:'00410',d:'Вчера',o:1,t:'Панели оператора Weintek 7", 3 шт., с лицензией на EasyBuilder. Нужна поставка до конца месяца',p:1,r:'Санкт-Петербург',c:'Панели оператора',u:'31 октября',l:2},
+    {n:'00409',d:'26 октября',o:3,t:'Частотные преобразователи Delta серии MS300 на 2,2 и 4 кВт, панели оператора ОВЕН СП310. Спецификация во вложении, нужны документы и сертификаты',p:7,r:'Свердловская область',c:'Приводы',u:'3 ноября',l:6},
+    {n:'00408',d:'26 октября',o:3,t:'ПЛК Siemens S7-1200 CPU 1214C, модули ввода SM 1231, 4 шт. Оригинал, с документами',p:3,r:'Москва',c:'Контроллеры',u:'5 ноября',l:8},
+    {n:'00407',d:'25 октября',o:4,t:'Датчики температуры и влажности с выходом RS-485, 40 шт. для диспетчеризации склада',p:1,r:'Татарстан',c:'Датчики',u:'1 ноября',l:4},
+    {n:'00405',d:'24 октября',o:5,t:'Датчики давления 0–16 бар, 4–20 мА, 12 шт., реле уровня, 6 шт. для насосной станции',p:2,r:'Свердловская область',c:'Датчики',u:'30 октября',l:1},
+    {n:'00398',d:'18 октября',o:11,t:'Шкаф управления вентиляцией на ОВЕН ТРМ1033 с частотником на 7,5 кВт',p:5,r:'Иркутская область',c:'Приводы',u:'25 октября',l:-1,x:1},
+    {n:'00391',d:'12 октября',o:17,t:'Модули Wiren Board WB-MAI6 и WB-MDM3, по 4 шт.',p:2,r:'Москва',c:'Контроллеры',u:'20 октября',l:-1,x:1},
+    {n:'00387',d:'9 октября',o:20,t:'Преобразователь интерфейсов RS-485 — Ethernet, 10 шт.',p:1,r:'Татарстан',c:'Шлюзы и связь',u:'17 октября',l:-1,x:1}
+  ];
+  var st={s:'open'},$=function(i){return document.getElementById(i)};
+  function uniq(k){return R.map(function(x){return x[k]}).filter(function(v,i,a){return a.indexOf(v)===i}).sort()}
+  uniq('c').forEach(function(v){$('cat').add(new Option(v,v))});
+  uniq('r').forEach(function(v){$('reg').add(new Option(v,v))});
+  function plural(n,a,b,c){n=Math.abs(n)%100;var m=n%10;return n>10&&n<20?c:m>1&&m<5?b:m==1?a:c}
+  function render(){
+    var q=$('q').value.trim().toLowerCase(),c=$('cat').value,g=$('reg').value,s=$('sort').value;
+    var open=R.filter(function(x){return !x.x}),closed=R.filter(function(x){return x.x});
+    document.querySelector('[data-s=open] i').textContent=open.length;
+    document.querySelector('[data-s=closed] i').textContent=closed.length;
+    var a=(st.s==='open'?open:closed).filter(function(x){
+      return (!c||x.c===c)&&(!g||x.r===g)&&(!q||(x.t+' '+x.n+' '+x.r+' '+x.c).toLowerCase().indexOf(q)>=0);
+    });
+    a.sort(s==='soon'?function(x,y){return x.l-y.l}:s==='big'?function(x,y){return y.p-x.p}:function(x,y){return x.o-y.o});
+    $('list').innerHTML=a.map(function(x){
+      var until=x.x?'<div class="until"><b>Приём закрыт '+x.u+'</b></div>'
+        :'<div class="until'+(x.l<=2?' soon':'')+'"><b>Приём до '+x.u+'</b><i>осталось '+x.l+' '+plural(x.l,'день','дня','дней')+'</i></div>';
+      return '<div class="req'+(x.x?' closed':'')+'"><div class="no">№ '+x.n+'<span class="date">'+x.d+'</span></div>'+
+        '<div class="body"><div class="txt">'+x.t+'</div><div class="meta"><span class="cat">'+x.c+'</span><span>'+x.p+' '+plural(x.p,'позиция','позиции','позиций')+'</span><span>'+x.r+'</span></div></div>'+
+        until+'<a class="go" href="#">Смотреть<svg><use href="#arr"/></svg></a></div>';
+    }).join('');
+    $('empty').style.display=a.length?'none':'block';
+    $('found').textContent=(q||c||g)?'Найдено: '+a.length:'';
+  }
+  ['q','cat','reg','sort'].forEach(function(i){$(i).addEventListener('input',render)});
+  document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){
+    st.s=b.dataset.s;document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});render();
+  }});
+  render();
 </script>
 </body>
 </html>
