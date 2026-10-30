@@ -13,8 +13,8 @@
     var q=new URLSearchParams(location.search);
     document.documentElement.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
     // оттенок жёлтого на выбор: ?y=1..5, 0 — прежний фирменный
-    var Y=['#fff200','#ffe94a','#f7d83b','#f2cf3a','#e9c63f','#e0bd45'],y=Y[+q.get('y')];
-    if(y)document.documentElement.style.setProperty('--yellow',y);
+    window.Y=['#fff200','#ffe94a','#f7d83b','#f2cf3a','#e9c63f','#e0bd45'];window.yi=Y[+q.get('y')]?+q.get('y'):0;
+    document.documentElement.style.setProperty('--yellow',Y[yi]);
   })();
 </script>
 <style>
@@ -192,6 +192,12 @@ footer nav a{color:#d0d0d0}
   .go{width:100%;margin-top:6px}
   footer{margin-top:56px}
 }
+/* временная панель выбора оттенка жёлтого, уберётся после выбора */
+.ypick{position:fixed;right:20px;bottom:20px;z-index:50;display:flex;align-items:center;gap:8px;padding:8px 10px;background:#141414;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 13px Inter;color:#cfcfcf}
+.ypick button{width:34px;height:34px;border:2px solid transparent;border-radius:4px;cursor:pointer;font:700 13px Inter;color:#141414;transition:transform .15s,border-color .15s}
+.ypick button:hover{transform:translateY(-2px)}
+.ypick button.on{border-color:#fff}
+@media (max-width:640px){.ypick{left:50%;right:auto;bottom:12px;transform:translateX(-50%);gap:6px;padding:6px 8px}.ypick button{width:32px;height:32px}}
 </style>
 </head>
 <body>
@@ -322,6 +328,23 @@ footer nav a{color:#d0d0d0}
     st.s=b.dataset.s;document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});render();
   }});
   render();
+</script>
+<div class="ypick" id="ypick">Цвет</div>
+<script>
+  // кнопки оттенков: красят страницу и запоминают выбор в адресе
+  (function(){
+    var p=document.getElementById('ypick');
+    Y.forEach(function(c,i){
+      var b=document.createElement('button');b.type='button';b.textContent=i;b.style.background=c;
+      b.title=i?c:'прежний '+c;b.classList.toggle('on',i===yi);
+      b.onclick=function(){
+        document.documentElement.style.setProperty('--yellow',c);
+        p.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});
+        var u=new URL(location.href);if(i)u.searchParams.set('y',i);else u.searchParams.delete('y');history.replaceState(null,'',u);
+      };
+      p.appendChild(b);
+    });
+  })();
 </script>
 </body>
 </html>
