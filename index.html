@@ -14,7 +14,8 @@
     document.documentElement.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
     // оттенок жёлтого на выбор: ?y=1..5, 0 — прежний фирменный
     window.Y=['#fff200','#ffe94a','#f7d83b','#f2cf3a','#e9c63f','#e0bd45'];window.yi=Y[+q.get('y')]?+q.get('y'):0;
-    document.documentElement.style.setProperty('--yellow',Y[yi]);
+    window.yc=/^[0-9a-f]{6}$/i.test(q.get('c')||'')?'#'+q.get('c').toLowerCase():Y[yi];
+    document.documentElement.style.setProperty('--yellow',yc);
   })();
 </script>
 <style>
@@ -192,12 +193,27 @@ footer nav a{color:#d0d0d0}
   .go{width:100%;margin-top:6px}
   footer{margin-top:56px}
 }
-/* временная панель выбора оттенка жёлтого, уберётся после выбора */
-.ypick{position:fixed;right:20px;bottom:20px;z-index:50;display:flex;align-items:center;gap:8px;padding:8px 10px;background:#141414;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 13px Inter;color:#cfcfcf}
-.ypick button{width:34px;height:34px;border:2px solid transparent;border-radius:4px;cursor:pointer;font:700 13px Inter;color:#141414;transition:transform .15s,border-color .15s}
-.ypick button:hover{transform:translateY(-2px)}
-.ypick button.on{border-color:#fff}
-@media (max-width:640px){.ypick{left:50%;right:auto;bottom:12px;transform:translateX(-50%);gap:6px;padding:6px 8px}.ypick button{width:32px;height:32px}}
+/* временная панель выбора жёлтого, уберётся после выбора */
+.ypick{position:fixed;right:20px;bottom:20px;z-index:50;width:300px;padding:14px 16px 16px;background:#141414;border-radius:8px;box-shadow:0 12px 34px rgba(0,0,0,.3);font:500 13px/1.3 Inter;color:#cfcfcf}
+.ypick .hd{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;font-weight:700;color:#fff}
+.ypick .hd i{font-style:normal;color:#8a8a8a;transition:transform .2s}
+.ypick.min .bd{display:none}.ypick.min .hd i{transform:rotate(180deg)}
+.ypick .pre{display:flex;gap:6px;margin:12px 0 14px}
+.ypick .pre button{flex:1;height:30px;border:2px solid transparent;border-radius:4px;cursor:pointer;font:700 12px Inter;color:#141414;transition:transform .15s,border-color .15s}
+.ypick .pre button:hover{transform:translateY(-2px)}
+.ypick .pre button.on{border-color:#fff}
+.ypick label{display:block;margin-top:10px}
+.ypick label span{display:flex;justify-content:space-between;margin-bottom:6px}
+.ypick label b{font-weight:600;color:#fff}
+.ypick input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:5px;outline:none;cursor:pointer}
+.ypick input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #141414;box-shadow:0 0 0 1px #fff}
+.ypick input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid #141414}
+.ypick .code{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #333}
+.ypick .sw{width:34px;height:34px;border-radius:4px;flex:none;background:var(--yellow)}
+.ypick .hex{flex:1;font:700 18px/1 Tektur,Inter;color:#fff;letter-spacing:.04em}
+.ypick .cp{height:34px;padding:0 12px;border:1px solid #555;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font:600 12px Inter}
+.ypick .cp:hover{border-color:#fff}
+@media (max-width:640px){.ypick{left:12px;right:12px;bottom:12px;width:auto}}
 </style>
 </head>
 <body>
@@ -329,21 +345,57 @@ footer nav a{color:#d0d0d0}
   }});
   render();
 </script>
-<div class="ypick" id="ypick">Цвет</div>
+<div class="ypick" id="ypick">
+  <div class="hd" id="yhd">Цвет жёлтого<i>▾</i></div>
+  <div class="bd">
+    <div class="pre" id="ypre"></div>
+    <label><span>Тон<b id="vh"></b></span><input id="rh" type="range" min="35" max="62" step="1"></label>
+    <label><span>Насыщенность<b id="vs"></b></span><input id="rs" type="range" min="30" max="100" step="1"></label>
+    <label><span>Яркость<b id="vv"></b></span><input id="rv" type="range" min="60" max="100" step="1"></label>
+    <div class="code"><span class="sw"></span><span class="hex" id="yhex"></span><button class="cp" id="ycp" type="button">Скопировать</button></div>
+  </div>
+</div>
 <script>
-  // кнопки оттенков: красят страницу и запоминают выбор в адресе
+  // панель жёлтого: готовые оттенки + ползунки тона, насыщенности и яркости, код цвета пишется в адрес
   (function(){
-    var p=document.getElementById('ypick');
+    var r=document.documentElement,$=function(i){return document.getElementById(i)},h,s,v;
+    function hex2hsv(x){
+      var n=parseInt(x.slice(1),16),R=(n>>16&255)/255,G=(n>>8&255)/255,B=(n&255)/255,mx=Math.max(R,G,B),mn=Math.min(R,G,B),d=mx-mn,H=0;
+      if(d)H=mx===R?((G-B)/d)%6:mx===G?(B-R)/d+2:(R-G)/d+4;
+      return [Math.round((H*60+360)%360),Math.round(mx?d/mx*100:0),Math.round(mx*100)];
+    }
+    function hsv2hex(H,S,V){
+      S/=100;V/=100;var f=function(n){var k=(n+H/60)%6;return V-V*S*Math.max(0,Math.min(k,4-k,1))};
+      return '#'+[f(5),f(3),f(1)].map(function(c){return ('0'+Math.round(c*255).toString(16)).slice(-2)}).join('');
+    }
+    function paint(c,fromSliders){
+      r.style.setProperty('--yellow',c);
+      $('yhex').textContent=c.toUpperCase();
+      if(!fromSliders){var t=hex2hsv(c);h=t[0];s=t[1];v=t[2];$('rh').value=h;$('rs').value=s;$('rv').value=v}
+      $('vh').textContent=h+'°';$('vs').textContent=s+'%';$('vv').textContent=v+'%';
+      $('rh').style.background='linear-gradient(90deg,'+hsv2hex(35,s,v)+','+hsv2hex(48,s,v)+','+hsv2hex(62,s,v)+')';
+      $('rs').style.background='linear-gradient(90deg,'+hsv2hex(h,30,v)+','+hsv2hex(h,100,v)+')';
+      $('rv').style.background='linear-gradient(90deg,'+hsv2hex(h,s,60)+','+hsv2hex(h,s,100)+')';
+      $('ypre').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',Y[b.textContent]===c)});
+      var u=new URL(location.href);u.searchParams.delete('y');
+      if(c===Y[0])u.searchParams.delete('c');else u.searchParams.set('c',c.slice(1));
+      history.replaceState(null,'',u);
+    }
     Y.forEach(function(c,i){
-      var b=document.createElement('button');b.type='button';b.textContent=i;b.style.background=c;
-      b.title=i?c:'прежний '+c;b.classList.toggle('on',i===yi);
-      b.onclick=function(){
-        document.documentElement.style.setProperty('--yellow',c);
-        p.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});
-        var u=new URL(location.href);if(i)u.searchParams.set('y',i);else u.searchParams.delete('y');history.replaceState(null,'',u);
-      };
-      p.appendChild(b);
+      var b=document.createElement('button');b.type='button';b.textContent=i;b.style.background=c;b.title=i?c:'прежний '+c;
+      b.onclick=function(){paint(c)};$('ypre').appendChild(b);
     });
+    ['rh','rs','rv'].forEach(function(id){$(id).addEventListener('input',function(){
+      h=+$('rh').value;s=+$('rs').value;v=+$('rv').value;paint(hsv2hex(h,s,v),true);
+    })});
+    $('yhd').onclick=function(){$('ypick').classList.toggle('min')};
+    $('ycp').onclick=function(){
+      var t=$('yhex').textContent,b=this,done=function(){b.textContent='Готово';setTimeout(function(){b.textContent='Скопировать'},1200)};
+      // на http буфера через navigator.clipboard нет, тогда старым способом
+      var old=function(){var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove();done()};
+      if(navigator.clipboard&&isSecureContext)navigator.clipboard.writeText(t).then(done,old);else old();
+    };
+    paint(yc);
   })();
 </script>
 </body>
