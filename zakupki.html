@@ -14,6 +14,7 @@
     r.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
     r.dataset.tg=q.get('tg')||'a';
     r.dataset.hv=q.get('hv')||'8';
+    r.dataset.sb=q.get('sb')||'0';
   })();
 </script>
 <style>
@@ -175,6 +176,46 @@ html{overflow-x:clip}
 .hv8 .btn{height:52px;padding:0 30px}
 .hv8 .btn-ghost{color:var(--yellow);border-color:var(--yellow)}
 .hv8 .btn-ghost:hover{background:var(--yellow);color:#141414}
+
+/* блоки «Покупателям» / «Поставщикам»: варианты усиления (sb=0 как было) */
+.hv8 .sbody{display:flex;flex-direction:column;flex:1}
+.hv8 .sic{display:none}
+.hv8 .sic svg{width:100%;height:100%}
+
+/* 1 — карточки: панели с фоновой подложкой и цветной кромкой */
+[data-sb="1"] .hv8 .side{padding:30px 30px 32px;border:1px solid #4a4a4a;border-top:4px solid #5a5a5a;border-radius:var(--r);background:rgba(255,255,255,.03)}
+[data-sb="1"] .hv8 .side:first-child{border-top-color:var(--yellow);background:rgba(255,242,0,.05)}
+[data-sb="1"] .hv8 .side+.side{padding:30px 30px 32px;border-left:1px solid #4a4a4a}
+[data-sb="1"] .hv8 .sides{gap:20px}
+[data-sb="1"] .hv8 .side .who{font-size:15px;margin-bottom:16px}
+[data-sb="1"] .hv8 .side .h3{font-size:24px}
+[data-sb="1"] .hv8 .side .btn{width:100%;height:56px}
+
+/* 2 — крупные заголовки: «Покупателям» главным текстом, жёлтым */
+[data-sb="2"] .hv8 .side{border-top:3px solid #5a5a5a;padding-top:26px}
+[data-sb="2"] .hv8 .side:first-child{border-top-color:var(--yellow)}
+[data-sb="2"] .hv8 .side .who{font:900 clamp(24px,2.6vw,34px)/1.1 Tektur;text-transform:none;letter-spacing:-.01em;color:var(--yellow);gap:16px;margin-bottom:20px}
+[data-sb="2"] .hv8 .side .who:before{display:none}
+[data-sb="2"] .hv8 .side+.side .who{color:#fff}
+[data-sb="2"] .hv8 .side .who:after{content:attr(data-n)}
+[data-sb="2"] .hv8 .side .h3{font-size:20px;color:#cfcfcf;font-weight:600}
+[data-sb="2"] .hv8 .side p{font-size:15px}
+
+/* 3 — плитки с иконкой в жёлтом квадрате */
+[data-sb="3"] .hv8 .side{flex-direction:row;gap:24px;align-items:flex-start}
+[data-sb="3"] .hv8 .side .sic{display:flex;flex:none;width:60px;height:60px;padding:16px;background:var(--yellow);color:#141414;border-radius:var(--r)}
+[data-sb="3"] .hv8 .side+.side .sic{background:transparent;color:var(--yellow);box-shadow:inset 0 0 0 2px var(--yellow)}
+[data-sb="3"] .hv8 .side .who{font-size:12px;margin-bottom:10px}
+[data-sb="3"] .hv8 .side .h3{font-size:24px}
+[data-sb="3"] .hv8 .side .btn{height:54px}
+
+/* 4 — широкие полосы-заголовки во всю ширину блока */
+[data-sb="4"] .hv8 .side{padding:0 0 8px}
+[data-sb="4"] .hv8 .side+.side{padding:0 0 8px}
+[data-sb="4"] .hv8 .side .who{background:#3d3d3d;border-left:5px solid var(--yellow);padding:14px 18px;font-size:15px;letter-spacing:.08em;color:#fff;margin:0 0 22px}
+[data-sb="4"] .hv8 .side+.side .who{border-left-color:#6a6a6a}
+[data-sb="4"] .hv8 .side .h3{font-size:24px;margin-bottom:14px}
+[data-sb="4"] .hv8 .side p{margin-bottom:24px}
 
 /* вариант 1: без коробки, как разворот журнала */
 .hv1{padding:56px 0 8px}
@@ -354,6 +395,16 @@ footer nav a{color:#d0d0d0}
   .go{width:100%;margin-top:6px}
   footer{margin-top:56px}
 }
+
+/* мобилка: варианты усиления блоков */
+@media (max-width:640px){
+  [data-sb="1"] .hv8 .side,[data-sb="1"] .hv8 .side+.side{padding:24px 20px}
+  [data-sb="1"] .hv8 .side+.side{margin-top:12px;padding-top:24px;border-top:1px solid #4a4a4a}
+  [data-sb="1"] .hv8 .side:first-child{border-top:4px solid var(--yellow)}
+  [data-sb="3"] .hv8 .side{flex-direction:column;gap:16px}
+  [data-sb="3"] .hv8 .side+.side{margin-top:32px;padding-top:32px}
+  [data-sb="4"] .hv8 .side+.side{padding:0 0 8px}
+}
 </style>
 </head>
 <body>
@@ -389,17 +440,23 @@ footer nav a{color:#d0d0d0}
       <span class="slogan">Бесплатный сервис</span>
     </div>
     <div class="sides">
-      <div class="side">
-        <span class="who">Покупателям</span>
-        <h2 class="h3">Собрать предложения от поставщиков</h2>
-        <p>Заполните заявку. Производители и поставщики из нашего каталога направят вам информацию об интересующих вас позициях</p>
-        <a class="btn btn-main" href="#">Заполнить заявку</a>
+      <div class="side" data-n="01">
+        <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M2.5 5h2.3l2.4 11h11.5l2.3-8H6"/><circle cx="9" cy="19.6" r="1.5"/><circle cx="17.4" cy="19.6" r="1.5"/></svg></span>
+        <span class="sbody">
+          <span class="who">Покупателям</span>
+          <h2 class="h3">Собрать предложения от поставщиков</h2>
+          <p>Поставщики из каталога и подписавшиеся, направят вам предложения по интересующему вас оборудованию</p>
+          <a class="btn btn-main" href="#">Заполнить заявку</a>
+        </span>
       </div>
-      <div class="side">
-        <span class="who">Поставщикам</span>
-        <h2 class="h3">Новые заявки от покупателей</h2>
-        <p>Подпишитесь на поступление новых заявок</p>
-        <a class="btn btn-ghost" href="#">Подписаться</a>
+      <div class="side" data-n="02">
+        <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M2.5 6h19v12h-19z"/><path d="M2.5 7.6l9.5 5.8 9.5-5.8"/></svg></span>
+        <span class="sbody">
+          <span class="who">Поставщикам</span>
+          <h2 class="h3">Новые заявки от покупателей</h2>
+          <p>Подпишитесь на поступление новых заявок — бесплатно</p>
+          <a class="btn btn-ghost" href="#">Подписаться</a>
+        </span>
       </div>
     </div>
   </div>
@@ -609,6 +666,7 @@ footer nav a{color:#d0d0d0}
     var d=e.data||{},r=document.documentElement;
     if(d.setTheme){r.dataset.theme=d.setTheme;localStorage.setItem('av-theme',d.setTheme)}
     if(d.setHv)r.dataset.hv=d.setHv;
+    if(d.setSb)r.dataset.sb=d.setSb;
   });
 
   // примерные заявки, только для наброска

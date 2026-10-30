@@ -45,19 +45,28 @@
     <button data-g="a">Кнопка А</button>
     <button data-g="b">Кнопка Б</button>
   </div>
+  <div class="tabs sbs">
+    <span style="color:#888;font-size:14px;align-self:center">Блоки:</span>
+    <button data-b="0">Как было</button>
+    <button data-b="1">1</button>
+    <button data-b="2">2</button>
+    <button data-b="3">3</button>
+    <button data-b="4">4</button>
+  </div>
   <a id="solo" href="zakupki.html" target="_blank">Открыть отдельно</a>
 </div>
 <div class="stage"><iframe id="f"></iframe></div>
 <script>
   const f=document.getElementById('f'),solo=document.getElementById('solo');
   const sizes={'100%':'desktop','820px':'tablet','390px':'phone'};
-  const st={w:'100%',t:'light',g:'a',h:'8'};
-  const [w,t,g,h]=location.hash.slice(1).split('/');
+  const st={w:'100%',t:'light',g:'a',h:'8',b:'0'};
+  const [w,t,g,h,b]=location.hash.slice(1).split('/');
   if(['1','2','3','4','5','6','7','8'].includes(h))st.h=h;
   for(const k in sizes)if(sizes[k]===w)st.w=k;
   if(t==='dark')st.t='dark';
   if(g==='b')st.g='b';
-  const src=()=>'zakupki.html?theme='+st.t+'&tg='+st.g+'&hv='+st.h;
+  if(['0','1','2','3','4'].includes(b))st.b=b;
+  const src=()=>'zakupki.html?theme='+st.t+'&tg='+st.g+'&hv='+st.h+'&sb='+st.b;
   const apply=reload=>{
     if(reload)f.src=src();
     f.style.width=st.w;solo.href=src();
@@ -65,12 +74,14 @@
     document.querySelectorAll('.themes button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.t));
     document.querySelectorAll('.hvs button').forEach(b=>b.classList.toggle('on',b.dataset.h===st.h));
     document.querySelectorAll('.tgs button').forEach(b=>b.classList.toggle('on',b.dataset.g===st.g));
-    history.replaceState(null,'','#'+sizes[st.w]+'/'+st.t+'/'+st.g+'/'+st.h);
+    document.querySelectorAll('.sbs button').forEach(b=>b.classList.toggle('on',b.dataset.b===st.b));
+    history.replaceState(null,'','#'+sizes[st.w]+'/'+st.t+'/'+st.g+'/'+st.h+'/'+st.b);
   };
   document.querySelectorAll('.sizes button').forEach(b=>b.onclick=()=>{st.w=b.dataset.w;apply()});
   document.querySelectorAll('.themes button').forEach(b=>b.onclick=()=>{st.t=b.dataset.t;f.contentWindow.postMessage({setTheme:st.t},'*');apply()});
   document.querySelectorAll('.hvs button').forEach(b=>b.onclick=()=>{st.h=b.dataset.h;f.contentWindow.postMessage({setHv:st.h},'*');apply()});
   document.querySelectorAll('.tgs button').forEach(b=>b.onclick=()=>{st.g=b.dataset.g;apply(true)});
+  document.querySelectorAll('.sbs button').forEach(b=>b.onclick=()=>{st.b=b.dataset.b;f.contentWindow.postMessage({setSb:st.b},'*');apply()});
   // кнопка внутри страницы тоже двигает переключатель на витрине
   addEventListener('message',e=>{if(e.data&&e.data.avTheme){st.t=e.data.avTheme;apply()}});
   apply(true);
