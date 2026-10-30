@@ -51,6 +51,7 @@
     <button data-c="2">2</button>
     <button data-c="3">3</button>
     <button data-c="4">4</button>
+    <button data-c="5">5</button>
   </div>
   <a id="solo" href="zakupki.html" target="_blank">Открыть отдельно</a>
 </div>
@@ -58,9 +59,9 @@
 <script>
   const f=document.getElementById('f'),solo=document.getElementById('solo');
   const sizes={'100%':'desktop','820px':'tablet','390px':'phone'};
-  const st={w:'100%',t:'light',g:'a',h:'8',c:'1'};
+  const st={w:'100%',t:'light',g:'a',h:'8',c:'5'};
   const [w,t,g,h,c]=location.hash.slice(1).split('/');
-  if(['1','2','3','4'].includes(c))st.c=c;
+  if(['1','2','3','4','5'].includes(c))st.c=c;
   if(['1','2','3','4','5','6','7','8'].includes(h))st.h=h;
   for(const k in sizes)if(sizes[k]===w)st.w=k;
   if(t==='dark')st.t='dark';

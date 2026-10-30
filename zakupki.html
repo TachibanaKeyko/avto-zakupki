@@ -14,7 +14,7 @@
     r.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
     r.dataset.tg=q.get('tg')||'a';
     r.dataset.hv=q.get('hv')||'8';
-    r.dataset.bc=q.get('bc')||'1';
+    r.dataset.bc=q.get('bc')||'5';
   })();
 </script>
 <style>
@@ -171,11 +171,12 @@ html{overflow-x:clip}
 .hv8 .side+.side{padding:8px 0 8px 48px;border-left:1px solid #4a4a4a}
 .hv8 .side .who{font:700 13px/1 Inter;text-transform:uppercase;letter-spacing:.1em;color:#fff;display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .hv8 .side .who:before{content:"";width:10px;height:10px;flex:none;background:var(--yellow)}
-/* цвет надписей «Покупателям»/«Поставщикам» и маркера, bc=1..4 */
+/* цвет надписей «Покупателям»/«Поставщикам» и маркера, bc=1..5 */
 [data-bc="1"] .hv8 .side .who{color:var(--yellow)}
 [data-bc="3"] .hv8 .side .who{color:var(--yellow)}
 [data-bc="3"] .hv8 .side .who:before{background:#fff}
 [data-bc="4"] .hv8 .side:first-child .who{color:var(--yellow)}
+[data-bc="5"] .hv8 .side .h3{color:var(--yellow)}
 .hv8 .side .h3{color:#fff;margin-bottom:12px}
 .hv8 .side p{flex:1;margin-bottom:28px;max-width:440px}
 .hv8 .btn{height:52px;padding:0 30px}
