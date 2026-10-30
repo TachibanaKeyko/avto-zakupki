@@ -23,6 +23,7 @@
 <div class="bar">
   <b>Закупки</b>
   <div class="tabs hvs">
+    <button data-h="8">Новая</button>
     <button data-h="1">Плашка 1</button>
     <button data-h="2">2</button>
     <button data-h="3">3</button>
@@ -50,9 +51,9 @@
 <script>
   const f=document.getElementById('f'),solo=document.getElementById('solo');
   const sizes={'100%':'desktop','820px':'tablet','390px':'phone'};
-  const st={w:'100%',t:'light',g:'a',h:'1'};
+  const st={w:'100%',t:'light',g:'a',h:'8'};
   const [w,t,g,h]=location.hash.slice(1).split('/');
-  if(['1','2','3','4','5','6','7'].includes(h))st.h=h;
+  if(['1','2','3','4','5','6','7','8'].includes(h))st.h=h;
   for(const k in sizes)if(sizes[k]===w)st.w=k;
   if(t==='dark')st.t='dark';
   if(g==='b')st.g='b';

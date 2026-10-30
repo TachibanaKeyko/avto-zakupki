@@ -13,7 +13,7 @@
     var q=new URLSearchParams(location.search),r=document.documentElement;
     r.dataset.theme=q.get('theme')||localStorage.getItem('av-theme')||'light';
     r.dataset.tg=q.get('tg')||'a';
-    r.dataset.hv=q.get('hv')||'1';
+    r.dataset.hv=q.get('hv')||'8';
   })();
 </script>
 <style>
@@ -86,7 +86,7 @@ nav a.cur{box-shadow:inset 0 -2px 0 var(--yellow);color:var(--ink)}
 .btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--bg)}
 .hero{display:none}
-[data-hv="1"] .hv1,[data-hv="2"] .hv2,[data-hv="3"] .hv3,[data-hv="4"] .hv4,[data-hv="5"] .hv5,[data-hv="6"] .hv6,[data-hv="7"] .hv7{display:block}
+[data-hv="1"] .hv1,[data-hv="2"] .hv2,[data-hv="3"] .hv3,[data-hv="4"] .hv4,[data-hv="5"] .hv5,[data-hv="6"] .hv6,[data-hv="7"] .hv7,[data-hv="8"] .hv8{display:block}
 html{overflow-x:clip}
 
 /* вариант 4: заголовок и входы слева, контроллер на светлой подложке справа */
@@ -154,6 +154,27 @@ html{overflow-x:clip}
 .door .ar svg{width:18px;height:18px}
 .door:hover .ar{background:var(--yellow);border-color:var(--yellow);color:#141414}
 .door .cta{display:block;font:700 14px Inter;color:var(--ink);margin-top:10px}
+
+/* вариант 8: первый набросок, как плашка на главной avtomatika.ru */
+@font-face{font-family:zenKurenaido;src:url(fonts/zen-kurenaido.woff2) format("woff2");font-display:swap}
+[data-hv="8"] main>.crumbs{display:none}
+.hv8{margin-top:12px;background:var(--graphite);border-radius:var(--r);padding:22px 56px 56px;color:#cfcfcf}
+[data-theme=dark] .hv8{border:1px solid var(--line)}
+.hv8 .crumbs{padding:0;color:#9a9a9a}
+.hv8 .crumbs a:hover{color:#fff}
+.hv8 .top{text-align:center;margin:30px 0 48px}
+.hv8 .h1{font-weight:900;font-size:clamp(30px,4.4vw,54px);line-height:1.1;color:#fff}
+.hv8 .slogan{display:block;font:400 clamp(26px,3.4vw,44px)/1.2 zenKurenaido,Inter,sans-serif;color:var(--yellow);margin-top:14px}
+.hv8 .sides{display:grid;grid-template-columns:1fr 1fr}
+.hv8 .side{padding:8px 48px 8px 0;display:flex;flex-direction:column}
+.hv8 .side+.side{padding:8px 0 8px 48px;border-left:1px solid #4a4a4a}
+.hv8 .side .who{font:700 13px/1 Inter;text-transform:uppercase;letter-spacing:.1em;color:#fff;display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.hv8 .side .who:before{content:"";width:22px;height:3px;background:var(--yellow)}
+.hv8 .side .h3{color:#fff;margin-bottom:12px}
+.hv8 .side p{flex:1;margin-bottom:28px;max-width:440px}
+.hv8 .btn{height:52px;padding:0 30px}
+.hv8 .btn-ghost{color:var(--yellow);border-color:var(--yellow)}
+.hv8 .btn-ghost:hover{background:var(--yellow);color:#141414}
 
 /* вариант 1: без коробки, как разворот журнала */
 .hv1{padding:56px 0 8px}
@@ -265,6 +286,8 @@ footer nav a{color:#d0d0d0}
   header .wrap{gap:16px}
   .logo{margin-right:auto}
   .hv1 .sides{gap:0 36px}
+  .hv8{padding:20px 32px 40px}
+  .hv8 .side{padding-right:28px}.hv8 .side+.side{padding-left:28px}
   .hv2{padding:48px 36px 40px 56px}
   .hv3 .top{grid-template-columns:1fr}
   .hv3 .top p{max-width:none}
@@ -290,6 +313,11 @@ footer nav a{color:#d0d0d0}
   .logo img{height:26px}
   .login{display:none}
   .hv1{padding-top:36px}
+  .hv8{margin:0 -16px;border-radius:0;padding:16px 20px 32px}
+  .hv8 .top{text-align:left;margin:24px 0 32px}
+  .hv8 .sides{grid-template-columns:1fr}
+  .hv8 .side,.hv8 .side+.side{padding:0;border:0}
+  .hv8 .side+.side{margin-top:32px;padding-top:32px;border-top:1px solid #4a4a4a}
   .hv1 .sides,.hv2 .sides,.hv3 .sides{grid-template-columns:1fr}
   .hv1 .sides{gap:40px;margin-top:36px}
   .hv1 .side .h3,.hv3 .side .h3{font-size:22px}
@@ -352,6 +380,29 @@ footer nav a{color:#d0d0d0}
 
 <main class="wrap">
   <div class="crumbs"><a href="#">Главная</a> / Закупки</div>
+
+  <!-- вариант 8: от первого наброска -->
+  <div class="hero hv8">
+    <div class="crumbs"><a href="#">Главная</a> / Закупки</div>
+    <div class="top">
+      <h1 class="h1">Закупки оборудования</h1>
+      <span class="slogan">Бесплатный сервис</span>
+    </div>
+    <div class="sides">
+      <div class="side">
+        <span class="who">Покупателям</span>
+        <h2 class="h3">Собрать предложения от поставщиков</h2>
+        <p>Заполните заявку. Производители и поставщики из нашего каталога направят вам информацию об интересующих вас позициях</p>
+        <a class="btn btn-main" href="#">Заполнить заявку</a>
+      </div>
+      <div class="side">
+        <span class="who">Поставщикам</span>
+        <h2 class="h3">Новые заявки от покупателей</h2>
+        <p>Подпишитесь на поступление новых заявок</p>
+        <a class="btn btn-ghost" href="#">Подписаться</a>
+      </div>
+    </div>
+  </div>
 
   <!-- вариант 1 -->
   <div class="hero hv1">
